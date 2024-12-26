@@ -24,6 +24,19 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
   const [loaded, error] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+    BauhausLight: require('../assets/fonts/bauhausstd-light.ttf'),
+    BauhausMedium: require('../assets/fonts/bauhausstd-medium.ttf'),
+    BauhausHeavy: require('../assets/fonts/bauhausstd-heavy.ttf'),
+    Hummingbird: require('../assets/fonts/hummingbird.ttf'),
+    LobsterTwoRegular: require('../assets/fonts/LobsterTwo-Regular.ttf'),
+    LobsterTwoBold: require('../assets/fonts/LobsterTwo-Bold.ttf'),
+    NexaScriptLight: require('../assets/fonts/NexaScriptLight.otf'),
+    NexaScriptHeavy: require('../assets/fonts/NexaScriptHeavy.otf'),
+    NotoSerif: require('../assets/fonts/NotoSerif.ttf'),
+    RobotoRegular: require('../assets/fonts/Roboto-Regular.ttf'),
+    RobotoBold: require('../assets/fonts/Roboto-Bold.ttf'),
+    UbuntuRegular: require('../assets/fonts/Ubuntu-Regular.ttf'),
+    UbuntuBold: require('../assets/fonts/Ubuntu-Bold.ttf'),
     ...FontAwesome.font,
   });
 
