@@ -11,14 +11,21 @@ import {
 import { useIntl } from "react-intl";
 import { useRouter } from "expo-router";
 import bcrypt from "bcryptjs";
+import { google } from "googleapis";
 
 import { useStudentContext } from "../../context/studentContext";
 import { useThemeContext } from "../../context/themeContext";
 import { useLocaleContext } from "../../context/localeContext";
 import { MAIN_SERVER_URL } from "../../constants/urls";
+import {
+  getSalt,
+  getGoogleClientID,
+  getGoogleClientSecret,
+  getGoogleRedirectURI,
+} from "../../constants/login";
 import { View } from "@/components/Themed";
 
-export default function TabOneScreen({ navigation }: any) {
+export default function TabOneScreen() {
   const router = useRouter();
   const intl = useIntl();
   const {
@@ -41,55 +48,149 @@ export default function TabOneScreen({ navigation }: any) {
   const handleRegistration = async () => {
     setIsLoading(true);
     try {
-      router.push({
-        pathname: "/screens/studentInfoForm",
-        params: {
-          first_name: "Mitchell" as string,
-          last_name: "Wintrow" as string,
-          email_address: "90mitchwintrow@gmail.com" as string,
-        },
-      });
-      // if (registrationCodeInput === "") {
-      //   console.error("Registration code is required"); // TODO: localize; add toast
-      //   setIsLoading(false);
-      //   return;
-      // } else {
-      //   const response = await fetch(
-      //     `${MAIN_SERVER_URL}/validate/registration`,
-      //     {
-      //       method: "POST",
-      //       headers: { "Content-Type": "application/json; charset=UTF-8" },
-      //       body: JSON.stringify({ registration_code: registrationCodeInput }),
-      //     }
-      //   );
+      // router.push({
+      //   pathname: "/screens/studentInfoForm",
+      //   params: {
+      //     first_name: "Mitchell" as string,
+      //     last_name: "Wintrow" as string,
+      //     email_address: "90mitchwintrow@gmail.com" as string,
+      //   },
+      // });
 
-      //   if (response.status === 200) {
-      //     const body = await response.json();
-      //     updateInfo({
-      //       first_name: body.first_name,
-      //       last_name: body.last_name,
-      //       email_address: body.email_address,
-      //       theme_mode: "light",
-      //       font_style: "Bauhaus",
-      //     });
-      //     navigation.navigate("/student-form", {
-      //       state: {
-      //         first_name: body.first_name,
-      //         last_name: body.last_name,
-      //         email_address: body.email_address,
-      //       },
-      //     });
-      //   } else {
-      //     console.error("Registration code is invalid!"); // TODO: localize; add toast
-      //   }
-      //   setIsLoading(false);
-      // }
+      if (registrationCodeInput === "") {
+        console.error("Registration code is required"); // TODO: localize; add toast
+        setIsLoading(false);
+        return;
+      } else {
+        const response = await fetch(
+          `${MAIN_SERVER_URL}/validate/registration`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json; charset=UTF-8" },
+            body: JSON.stringify({ registration_code: registrationCodeInput }),
+          }
+        );
+
+        if (response.status === 200) {
+          const body = await response.json();
+          updateInfo({
+            first_name: body.first_name,
+            last_name: body.last_name,
+            email_address: body.email_address,
+            theme_mode: "light",
+            font_style: "Bauhaus",
+          });
+          router.push({
+            pathname: "/screens/studentInfoForm",
+            params: {
+              first_name: body.first_name as string,
+              last_name: body.last_name as string,
+              email_address: body.email_address as string,
+            },
+          });
+        } else {
+          console.error("Registration code is invalid!"); // TODO: localize; add toast
+        }
+        setIsLoading(false);
+      }
     } catch (error) {
       console.error("Error registering user:", error); // TODO: localize; add toast
       setIsLoading(false);
       throw error;
     }
   };
+
+  const handleLogin = async () => {
+    setIsLoading(true);
+    try {
+      if (emailInput === "" || passwordInput === "") {
+        console.error("Email address and password are required"); // TODO: localize; add toast
+        setIsLoading(false);
+        return;
+      } else {
+        const salt = getSalt();
+        const hashedPassword = bcrypt.hashSync(passwordInput, salt);
+        const shortenedHash = hashedPassword.slice(0, 32);
+        const response = await fetch(`${MAIN_SERVER_URL}/validate/login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json; charset=UTF-8" },
+          body: JSON.stringify({
+            email_address: emailInput,
+            password: shortenedHash,
+          }),
+        });
+
+        if (response.status === 200) {
+          const body = await response.json();
+          console.log("Login response:", body);
+
+          updateInfo({
+            student_id: body.student_id,
+            first_name: body.first_name,
+            preferred_name: body.preferred_name,
+            last_name: body.last_name,
+            email_address: body.email_address,
+            native_language: body.native_language,
+            preferred_language: body.preferred_language,
+            student_since: body.student_since,
+            theme_mode: body.theme_mode,
+            font_style: body.font_style,
+            profile_picture_url: body.profile_picture_url,
+            profile_picture_path: body.profile_picture_path,
+            time_zone: body.time_zone,
+            lessons_remaining: body.lessons_remaining,
+            lessons_completed: body.lessons_completed,
+          });
+          toggleThemeMode(
+            !body.theme_mode || body.theme_mode === ""
+              ? "light"
+              : body.theme_mode
+          );
+          if (body.preferred_language) {
+            changeLocale(body.preferred_language);
+          }
+          if (body.font_style) {
+            changeFontStyle(body.font_style);
+          }
+          if (body.student_id) {
+            // TODO: connect to chat server
+            // connectChatWebSocket(body.student_id);
+          } else {
+            console.error(
+              "Student ID not found in response, cannot connect to chat server!"
+            ); // TODO: localize; add toast
+          }
+          if (!body.public_key) {
+            // TODO: generate key pair
+            // const keyPair = await generateKeyPair();
+            // if (keyPair) {
+            //   updateInfoOnServer({
+            //     student_id: body.student_id,
+            //     email_address: emailInput,
+            //     public_key: keyPair.publicKey,
+            //   });
+            // } else {
+            //   console.error(
+            //     "Error generating key pair, data not being encrypted!"
+            //   ); // TODO: localize; add toast
+            // }
+          }
+          router.push({
+            pathname: "/screens/home",
+          });
+        } else {
+          console.error("Invalid email address or password!"); // TODO: localize; add toast
+        }
+        setIsLoading(false);
+      }
+    } catch (error) {
+      console.error("Error logging in:", error); // TODO: localize; add toast
+      setIsLoading(false);
+      throw error;
+    }
+  };
+
+  // TODO: Implement Google OAuth2 login and expo-auth-session
 
   return (
     <LinearGradient
@@ -205,7 +306,13 @@ export default function TabOneScreen({ navigation }: any) {
             mode="contained"
             textColor="#001524"
             buttonColor="#ffbf69"
-            onPress={handleRegistration}
+            onPress={() => {
+              if (isLoginVisible) {
+                handleLogin();
+              } else {
+                handleRegistration();
+              }
+            }}
           >
             {intl
               .formatMessage({
@@ -231,7 +338,6 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     backgroundColor: "white",
     padding: 12,
-    // boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
     width: "90%",
   },
   container: {
