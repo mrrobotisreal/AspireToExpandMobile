@@ -7,7 +7,7 @@ import React, {
 } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import { MAIN_SERVER_URL } from "../constants/urls";
+import { getMainServerURL } from "../constants/urls";
 import { ThemeMode, AppFontFamily } from "./themeContext";
 
 interface ServerStudentInfo {
@@ -80,7 +80,7 @@ const getInfoFromServer = async (
 ): Promise<ServerStudentInfo> => {
   try {
     const response = await fetch(
-      `${MAIN_SERVER_URL}/student?studentID=${studentID}`
+      `${getMainServerURL()}/student?studentID=${studentID}`
     );
     const data = await response.json();
     const { student } = data;
@@ -123,7 +123,7 @@ interface UpdateStudentInfoRequest {
 
 const updateInfoOnServer = async (newInfo: UpdateStudentInfoRequest) => {
   try {
-    const response = await fetch(`${MAIN_SERVER_URL}/students/update`, {
+    const response = await fetch(`${getMainServerURL()}/students/update`, {
       method: "PUT",
       headers: { "Content-Type": "application/json; charset=UTF-8" },
       body: JSON.stringify(newInfo),

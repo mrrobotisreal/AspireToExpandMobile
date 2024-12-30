@@ -2,6 +2,7 @@ import { useState } from "react";
 import { StyleSheet } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import {
+  ActivityIndicator,
   Button,
   HelperText,
   Surface,
@@ -10,19 +11,20 @@ import {
 } from "react-native-paper";
 import { useIntl } from "react-intl";
 import { useRouter } from "expo-router";
-import bcrypt from "bcryptjs";
+// @ts-ignore
+import bcrypt from "react-native-bcrypt";
 import { google } from "googleapis";
 
-import { useStudentContext } from "../../context/studentContext";
-import { useThemeContext } from "../../context/themeContext";
-import { useLocaleContext } from "../../context/localeContext";
-import { MAIN_SERVER_URL } from "../../constants/urls";
+import { useStudentContext } from "../context/studentContext";
+import { useThemeContext } from "../context/themeContext";
+import { useLocaleContext } from "../context/localeContext";
+import { getMainServerURL, getMobileHashingServerURL } from "../constants/urls";
 import {
   getSalt,
   getGoogleClientID,
   getGoogleClientSecret,
   getGoogleRedirectURI,
-} from "../../constants/login";
+} from "../constants/login";
 import { View } from "@/components/Themed";
 
 export default function TabOneScreen() {
@@ -63,7 +65,7 @@ export default function TabOneScreen() {
         return;
       } else {
         const response = await fetch(
-          `${MAIN_SERVER_URL}/validate/registration`,
+          `${getMainServerURL()}/validate/registration`,
           {
             method: "POST",
             headers: { "Content-Type": "application/json; charset=UTF-8" },
@@ -81,7 +83,7 @@ export default function TabOneScreen() {
             font_style: "Bauhaus",
           });
           router.push({
-            pathname: "/screens/studentInfoForm",
+            pathname: "/(main)/screens/studentInfoForm",
             params: {
               first_name: body.first_name as string,
               last_name: body.last_name as string,
@@ -108,15 +110,33 @@ export default function TabOneScreen() {
         setIsLoading(false);
         return;
       } else {
-        const salt = getSalt();
-        const hashedPassword = bcrypt.hashSync(passwordInput, salt);
-        const shortenedHash = hashedPassword.slice(0, 32);
-        const response = await fetch(`${MAIN_SERVER_URL}/validate/login`, {
+        console.log("Logging in...");
+        let passwordHash: string;
+        console.log(getMobileHashingServerURL());
+        const hashResponse = await fetch(
+          `${getMobileHashingServerURL()}/hash`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json; charset=UTF-8" },
+            body: JSON.stringify({ password: passwordInput }),
+          }
+        );
+        if (hashResponse.status === 200) {
+          const text = await hashResponse.text();
+          console.log("Password hashed successfully:", text);
+          passwordHash = text;
+        } else {
+          console.error("Error hashing password:", hashResponse.statusText); // TODO: localize; add toast
+          setIsLoading(false);
+          return;
+        }
+
+        const response = await fetch(`${getMainServerURL()}/validate/login`, {
           method: "POST",
           headers: { "Content-Type": "application/json; charset=UTF-8" },
           body: JSON.stringify({
             email_address: emailInput,
-            password: shortenedHash,
+            password: passwordHash,
           }),
         });
 
@@ -176,10 +196,14 @@ export default function TabOneScreen() {
             // }
           }
           router.push({
-            pathname: "/screens/home",
+            pathname: "/(main)/screens/home",
           });
-        } else {
+        } else if (response.status === 401) {
           console.error("Invalid email address or password!"); // TODO: localize; add toast
+        } else if (response.status >= 500) {
+          console.error("Server error:", response.statusText); // TODO: localize; add toast
+        } else {
+          console.error("Unknown error:", response.statusText); // TODO: localize; add toast
         }
         setIsLoading(false);
       }
@@ -288,7 +312,7 @@ export default function TabOneScreen() {
         )}
         <View style={styles.bottomBox}>
           <Button
-            labelStyle={{ fontFamily: "Bauhaus-Medium" }}
+            labelStyle={{ fontFamily: "Bauhaus-Heavy" }}
             mode="text"
             textColor="#ff7d00"
             onPress={() => setIsLoginVisible(!isLoginVisible)}
@@ -301,27 +325,36 @@ export default function TabOneScreen() {
               })
               .toUpperCase()}
           </Button>
-          <Button
-            labelStyle={{ fontFamily: "Bauhaus-Medium" }}
-            mode="contained"
-            textColor="#001524"
-            buttonColor="#ffbf69"
-            onPress={() => {
-              if (isLoginVisible) {
-                handleLogin();
-              } else {
-                handleRegistration();
-              }
-            }}
-          >
-            {intl
-              .formatMessage({
-                id: isLoginVisible
-                  ? "common_login"
-                  : "registrationCodeSubmitButton",
-              })
-              .toUpperCase()}
-          </Button>
+          {isLoading ? (
+            <ActivityIndicator
+              animating={true}
+              color={theme.colors.primary}
+              size="large"
+            />
+          ) : (
+            <Button
+              labelStyle={{ fontFamily: "Bauhaus-Heavy" }}
+              mode="contained"
+              textColor="#001524"
+              buttonColor="#ffbf69"
+              onPress={() => {
+                setIsLoading(true);
+                if (isLoginVisible) {
+                  handleLogin();
+                } else {
+                  handleRegistration();
+                }
+              }}
+            >
+              {intl
+                .formatMessage({
+                  id: isLoginVisible
+                    ? "common_login"
+                    : "registrationCodeSubmitButton",
+                })
+                .toUpperCase()}
+            </Button>
+          )}
         </View>
       </Surface>
     </LinearGradient>

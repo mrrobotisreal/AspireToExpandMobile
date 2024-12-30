@@ -15,7 +15,7 @@ import bcrypt from "bcryptjs";
 import { useStudentContext } from "../../context/studentContext";
 import { useThemeContext } from "../../context/themeContext";
 import { useLocaleContext } from "../../context/localeContext";
-import { MAIN_SERVER_URL } from "../../constants/urls";
+import { getMainServerURL } from "../../constants/urls";
 import { View } from "@/components/Themed";
 
 export default function TabOneScreen({ navigation }: any) {
@@ -55,7 +55,7 @@ export default function TabOneScreen({ navigation }: any) {
       //   return;
       // } else {
       //   const response = await fetch(
-      //     `${MAIN_SERVER_URL}/validate/registration`,
+      //     `${getMainServerURL()}/validate/registration`,
       //     {
       //       method: "POST",
       //       headers: { "Content-Type": "application/json; charset=UTF-8" },

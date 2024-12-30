@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 
-import { MAIN_SERVER_URL, MAIN_CHAT_SERVER_URL } from "../constants/urls";
+import { getMainServerURL, getMainChatServerURL } from "../constants/urls";
 
 interface UseUploadImageReturns {
   uploadImage: (
@@ -30,11 +30,14 @@ async function uploadImage(
       `${formattedStudentID}.${fileExtension}`
     );
 
-    const response = await fetch(`${MAIN_SERVER_URL}/students/update/image`, {
-      method: "PUT",
-      headers: { "Content-Type": "multipart/form-data" },
-      body: formData,
-    });
+    const response = await fetch(
+      `${getMainServerURL()}/students/update/image`,
+      {
+        method: "PUT",
+        headers: { "Content-Type": "multipart/form-data" },
+        body: formData,
+      }
+    );
 
     if (!response.ok) {
       throw new Error(`Failed to upload image: ${response.statusText}`);
@@ -70,11 +73,14 @@ async function uploadChatImage(
     );
 
     // use sharp library to resize image on server
-    const response = await fetch(`${MAIN_CHAT_SERVER_URL}/chats/upload/image`, {
-      method: "POST",
-      headers: { "Content-Type": "multipart/form-data" },
-      body: formData,
-    });
+    const response = await fetch(
+      `${getMainChatServerURL()}/chats/upload/image`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "multipart/form-data" },
+        body: formData,
+      }
+    );
     // const response = await fetch(`http://localhost:11115/chats/upload/image`, {
     //   method: "POST",
     //   body: formData,

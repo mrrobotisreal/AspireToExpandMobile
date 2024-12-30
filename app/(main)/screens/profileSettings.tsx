@@ -104,7 +104,41 @@ const ProfileSettings: FC = () => {
     }
   };
 
-  const handleUpdateSettings = async () => {};
+  const handleUpdateSettingsOnServer = async () => {
+    if (!info.student_id || info.student_id === "") {
+      console.error("Student ID is required to update settings on server");
+      return;
+    }
+    if (!info.email_address || info.email_address === "") {
+      console.error("Email address is required to update settings on server");
+      return;
+    }
+
+    try {
+      await updateInfoOnServer({
+        student_id: info.student_id,
+        email_address: info.email_address,
+        preferred_language: preferredLanguage,
+        profile_picture_url: profilePictureURL,
+        profile_picture_path: profilePicturePath,
+        time_zone: timeZone,
+      });
+    } catch (error) {
+      console.error("Error updating settings on server: ", error);
+    }
+  };
+
+  const handleUpdateSettings = async () => {
+    updateInfo({
+      ...info,
+      preferred_language: preferredLanguage,
+      profile_picture_url: profilePictureURL,
+      profile_picture_path: profilePicturePath,
+      time_zone: timeZone,
+      lessons_remaining: lessonsRemaining,
+    });
+    handleUpdateSettingsOnServer();
+  };
 
   const checkForStudentInfo = async () => {
     const storedStudentInfo = await getInfo();
@@ -167,9 +201,7 @@ const ProfileSettings: FC = () => {
             <Avatar.Image
               size={192}
               source={{
-                uri:
-                  avatarSrc ||
-                  "https://aspirewithalina.com:8888/uploads/profileImages/df78d663_5801_41ba_ac65_7a7415a2e6c6.png",
+                uri: avatarSrc,
               }}
               style={{
                 marginBottom: 12,
@@ -221,28 +253,44 @@ const ProfileSettings: FC = () => {
                 setPreferredLanguage("en");
                 setIsPreferredLanguageMenuVisible(false);
               }}
+              leadingIcon={preferredLanguage === "en" ? "check" : ""}
               title={intl.formatMessage({ id: "common_language_en" })}
+              titleStyle={{
+                fontFamily: preferredLanguage === "en" ? largeFont : mediumFont,
+              }}
             />
             <Menu.Item
               onPress={() => {
                 setPreferredLanguage("uk");
                 setIsPreferredLanguageMenuVisible(false);
               }}
+              leadingIcon={preferredLanguage === "uk" ? "check" : ""}
               title={intl.formatMessage({ id: "common_language_uk" })}
+              titleStyle={{
+                fontFamily: preferredLanguage === "uk" ? largeFont : mediumFont,
+              }}
             />
             <Menu.Item
               onPress={() => {
                 setPreferredLanguage("ru");
                 setIsPreferredLanguageMenuVisible(false);
               }}
+              leadingIcon={preferredLanguage === "ru" ? "check" : ""}
               title={intl.formatMessage({ id: "common_language_ru" })}
+              titleStyle={{
+                fontFamily: preferredLanguage === "ru" ? largeFont : mediumFont,
+              }}
             />
             <Menu.Item
               onPress={() => {
                 setPreferredLanguage("de");
                 setIsPreferredLanguageMenuVisible(false);
               }}
+              leadingIcon={preferredLanguage === "de" ? "check" : ""}
               title={intl.formatMessage({ id: "common_language_de" })}
+              titleStyle={{
+                fontFamily: preferredLanguage === "de" ? largeFont : mediumFont,
+              }}
             />
           </Menu>
           <Text variant="titleLarge" style={{ marginBottom: 8 }}>
@@ -274,42 +322,72 @@ const ProfileSettings: FC = () => {
                 setTimeZone("timeZone_us_pacific");
                 setIsTimeZoneMenuVisible(false);
               }}
+              leadingIcon={timeZone === "timeZone_us_pacific" ? "check" : ""}
               title={intl.formatMessage({ id: "timeZone_us_pacific" })}
+              titleStyle={{
+                fontFamily:
+                  timeZone === "timeZone_us_pacific" ? largeFont : mediumFont,
+              }}
             />
             <Menu.Item
               onPress={() => {
                 setTimeZone("timeZone_us_mountain");
                 setIsTimeZoneMenuVisible(false);
               }}
+              leadingIcon={timeZone === "timeZone_us_mountain" ? "check" : ""}
               title={intl.formatMessage({ id: "timeZone_us_mountain" })}
+              titleStyle={{
+                fontFamily:
+                  timeZone === "timeZone_us_mountain" ? largeFont : mediumFont,
+              }}
             />
             <Menu.Item
               onPress={() => {
                 setTimeZone("timeZone_us_central");
                 setIsTimeZoneMenuVisible(false);
               }}
+              leadingIcon={timeZone === "timeZone_us_central" ? "check" : ""}
               title={intl.formatMessage({ id: "timeZone_us_central" })}
+              titleStyle={{
+                fontFamily:
+                  timeZone === "timeZone_us_central" ? largeFont : mediumFont,
+              }}
             />
             <Menu.Item
               onPress={() => {
                 setTimeZone("timeZone_us_eastern");
                 setIsTimeZoneMenuVisible(false);
               }}
+              leadingIcon={timeZone === "timeZone_us_eastern" ? "check" : ""}
               title={intl.formatMessage({ id: "timeZone_us_eastern" })}
+              titleStyle={{
+                fontFamily:
+                  timeZone === "timeZone_us_eastern" ? largeFont : mediumFont,
+              }}
             />
             <Menu.Item
               onPress={() => {
                 setTimeZone("timeZone_at_vienna");
                 setIsTimeZoneMenuVisible(false);
               }}
+              leadingIcon={timeZone === "timeZone_at_vienna" ? "check" : ""}
               title={intl.formatMessage({ id: "timeZone_at_vienna" })}
+              titleStyle={{
+                fontFamily:
+                  timeZone === "timeZone_at_vienna" ? largeFont : mediumFont,
+              }}
             />
             <Menu.Item
               onPress={() => {
                 setTimeZone("timeZone_ua_kyiv");
                 setIsTimeZoneMenuVisible(false);
               }}
+              leadingIcon={timeZone === "timeZone_ua_kyiv" ? "check" : ""}
               title={intl.formatMessage({ id: "timeZone_ua_kyiv" })}
+              titleStyle={{
+                fontFamily:
+                  timeZone === "timeZone_ua_kyiv" ? largeFont : mediumFont,
+              }}
             />
           </Menu>
           <Text variant="titleLarge" style={{ marginBottom: 8 }}>

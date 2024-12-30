@@ -203,8 +203,14 @@ const AppSettings: FC = () => {
               <Button
                 mode="outlined"
                 onPress={() => setIsThemeMenuVisible(true)}
-                style={{ marginBottom: 16 }}
-                labelStyle={{ color: "black", fontFamily: largeFont }}
+                style={{
+                  marginBottom: 16,
+                  borderColor: theme.colors.secondary,
+                }}
+                labelStyle={{
+                  color: theme.colors.secondary,
+                  fontFamily: largeFont,
+                }}
               >
                 {selectedThemeModeText}
               </Button>
@@ -244,8 +250,14 @@ const AppSettings: FC = () => {
               <Button
                 mode="outlined"
                 onPress={() => setIsFontMenuVisible(true)}
-                style={{ marginBottom: 24 }}
-                labelStyle={{ color: "black", fontFamily: largeFont }}
+                style={{
+                  marginBottom: 24,
+                  borderColor: theme.colors.secondary,
+                }}
+                labelStyle={{
+                  color: theme.colors.secondary,
+                  fontFamily: largeFont,
+                }}
               >
                 {selectedFontFamilyText}
               </Button>
@@ -335,7 +347,6 @@ const AppSettings: FC = () => {
               mode="contained"
               onPress={handleUpdateSettings}
               style={{
-                width: "40%",
                 // @ts-ignore
                 backgroundColor: theme.colors.secondaryLight,
               }}

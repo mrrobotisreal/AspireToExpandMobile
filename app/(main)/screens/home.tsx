@@ -71,6 +71,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+    padding: 6,
   },
   scrollContent: {
     paddingBottom: 16,

@@ -1,7 +1,8 @@
-const SALT = process.env.SALT;
-const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
-const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
-const GOOGLE_REDIRECT_URI = "http://localhost/oauth2callback";
+import Constants from "expo-constants";
+
+// @ts-ignore
+const { SALT, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REDIRECT_URI } =
+  Constants.expoConfig!.extra;
 
 export const getSalt = () => SALT;
 export const getGoogleClientID = () => GOOGLE_CLIENT_ID;

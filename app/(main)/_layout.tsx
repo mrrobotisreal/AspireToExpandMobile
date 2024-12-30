@@ -20,9 +20,7 @@ const MainLayout: FC = () => {
       <Avatar.Image
         size={40}
         source={{
-          uri:
-            info.profile_picture_url ||
-            "https://aspirewithalina.com:8888/uploads/profileImages/df78d663_5801_41ba_ac65_7a7415a2e6c6.png",
+          uri: info.profile_picture_url,
         }}
         onProgress={() => {}}
       />
@@ -81,7 +79,7 @@ const MainLayout: FC = () => {
         options={{ title: "Student Info Form" }}
       />
       <Drawer.Screen
-        name="home"
+        name="screens/home"
         options={{ title: intl.formatMessage({ id: "common_home" }) }}
       />
       {/* <Drawer.Screen
@@ -103,7 +101,7 @@ const MainLayout: FC = () => {
         }}
       />
       <Drawer.Screen
-        name="login"
+        name="/login"
         options={{ title: intl.formatMessage({ id: "common_logout" }) }}
       />
     </Drawer>
