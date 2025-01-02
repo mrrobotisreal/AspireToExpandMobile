@@ -192,6 +192,7 @@ const AppSettings: FC = () => {
               marginBottom: 12,
               backgroundColor: theme.dark ? "white" : "black",
             }}
+            bold
           />
           <Text variant="titleLarge" style={{ fontFamily: largeFont }}>
             {intl.formatMessage({ id: "account_appSettings_themeMode" })}:

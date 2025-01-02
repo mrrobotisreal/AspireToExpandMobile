@@ -182,6 +182,7 @@ const ProfileSettings: FC = () => {
               marginBottom: 12,
               backgroundColor: theme.dark ? "white" : "black",
             }}
+            bold
           />
           <Text variant="titleLarge" style={{ marginBottom: 8 }}>
             {intl.formatMessage({
