@@ -39,7 +39,7 @@ This app provides students with the ability manage their data, securely pay for 
 
 ## Demo
 
-![gifDemo](https://winapps-solutions-llc.s3.us-west-2.amazonaws.com/aspire-with-alina/mobile/mobileDemo.gif)
+![gifDemo](./mobileDemo.gif)
 
 More demos will be added over time...
 
