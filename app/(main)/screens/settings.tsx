@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { Button, Divider, Menu, Surface, Text } from "react-native-paper";
+import { Button, Divider, Icon, Menu, Surface, Text } from "react-native-paper";
 import { useIntl } from "react-intl";
 
 import { useStudentContext } from "../../../context/studentContext";
@@ -13,8 +13,14 @@ import {
 
 const AppSettings: FC = () => {
   const intl = useIntl();
-  const { theme, toggleThemeMode, changeFontStyle, largeFont, mediumFont } =
-    useThemeContext();
+  const {
+    theme,
+    gradientColors,
+    toggleThemeMode,
+    changeFontStyle,
+    largeFont,
+    mediumFont,
+  } = useThemeContext();
   const { info, getInfo, updateInfo, updateInfoOnServer } = useStudentContext();
 
   const [isThemeMenuVisible, setIsThemeMenuVisible] = useState(false);
@@ -167,24 +173,29 @@ const AppSettings: FC = () => {
   return (
     <LinearGradient
       style={styles.container}
-      colors={[
-        "#78290f",
-        "#ff7d00",
-        "#ffbf69",
-        "#cbf3f0",
-        "#2ec4b6",
-        "#006d77",
-        "#001524",
-      ]}
+      colors={gradientColors}
       start={{ x: 1, y: 1 }}
       end={{ x: 0, y: 0 }}
     >
-      <Surface style={styles.box}>
+      <Surface
+        style={{
+          ...styles.box,
+          backgroundColor: theme.dark
+            ? theme.colors.surfaceDark
+            : theme.colors.background,
+        }}
+      >
         <ScrollView contentContainerStyle={styles.scrollContent}>
-          <Text variant="headlineMedium">
+          <Text
+            variant="headlineMedium"
+            style={{ color: theme.colors.textPrimary }}
+          >
             {intl.formatMessage({ id: "account_appSettings" })}
           </Text>
-          <Text variant="bodyLarge" style={{ marginBottom: 6 }}>
+          <Text
+            variant="bodyLarge"
+            style={{ marginBottom: 6, color: theme.colors.textPrimary }}
+          >
             {intl.formatMessage({ id: "account_appSettings_description" })}
           </Text>
           <Divider
@@ -194,7 +205,10 @@ const AppSettings: FC = () => {
             }}
             bold
           />
-          <Text variant="titleLarge" style={{ fontFamily: largeFont }}>
+          <Text
+            variant="titleLarge"
+            style={{ fontFamily: largeFont, color: theme.colors.textPrimary }}
+          >
             {intl.formatMessage({ id: "account_appSettings_themeMode" })}:
           </Text>
           <Menu
@@ -206,27 +220,42 @@ const AppSettings: FC = () => {
                 onPress={() => setIsThemeMenuVisible(true)}
                 style={{
                   marginBottom: 16,
-                  borderColor: theme.colors.secondary,
+                  borderColor: theme.dark
+                    ? theme.colors.secondaryLight
+                    : theme.colors.secondary,
                 }}
                 labelStyle={{
-                  color: theme.colors.secondary,
+                  color: theme.dark
+                    ? theme.colors.secondaryLight
+                    : theme.colors.secondary,
                   fontFamily: largeFont,
                 }}
               >
                 {selectedThemeModeText}
               </Button>
             }
-            style={{ width: "92%" }}
+            contentStyle={{
+              backgroundColor: theme.colors.surface,
+              borderRadius: 8,
+            }}
+            style={{
+              width: "92%",
+            }}
           >
             <Menu.Item
               onPress={() => handleSelectThemeMode("light")}
               title={intl.formatMessage({
                 id: "account_appSettings_themeMode_lightTheme",
               })}
-              leadingIcon={selectedThemeMode === "light" ? "check" : ""}
+              leadingIcon={() =>
+                selectedThemeMode === "light" ? (
+                  <Icon source="check" size={26} color="limegreen" />
+                ) : null
+              }
               titleStyle={{
                 fontFamily:
                   selectedThemeMode === "light" ? largeFont : mediumFont,
+                color: theme.colors.textPrimary,
               }}
             />
             <Menu.Item
@@ -234,14 +263,22 @@ const AppSettings: FC = () => {
               title={intl.formatMessage({
                 id: "account_appSettings_themeMode_darkTheme",
               })}
-              leadingIcon={selectedThemeMode === "dark" ? "check" : ""}
+              leadingIcon={() =>
+                selectedThemeMode === "dark" ? (
+                  <Icon source="check" size={26} color="limegreen" />
+                ) : null
+              }
               titleStyle={{
                 fontFamily:
                   selectedThemeMode === "dark" ? largeFont : mediumFont,
+                color: theme.colors.textPrimary,
               }}
             />
           </Menu>
-          <Text variant="titleLarge" style={{ fontFamily: largeFont }}>
+          <Text
+            variant="titleLarge"
+            style={{ fontFamily: largeFont, color: theme.colors.textPrimary }}
+          >
             {intl.formatMessage({ id: "account_appSettings_fontStyle" })}:
           </Text>
           <Menu
@@ -253,16 +290,24 @@ const AppSettings: FC = () => {
                 onPress={() => setIsFontMenuVisible(true)}
                 style={{
                   marginBottom: 24,
-                  borderColor: theme.colors.secondary,
+                  borderColor: theme.dark
+                    ? theme.colors.secondaryLight
+                    : theme.colors.secondary,
                 }}
                 labelStyle={{
-                  color: theme.colors.secondary,
+                  color: theme.dark
+                    ? theme.colors.secondaryLight
+                    : theme.colors.secondary,
                   fontFamily: largeFont,
                 }}
               >
                 {selectedFontFamilyText}
               </Button>
             }
+            contentStyle={{
+              backgroundColor: theme.colors.surface,
+              borderRadius: 8,
+            }}
             style={{ width: "92%" }}
           >
             <Menu.Item
@@ -270,10 +315,15 @@ const AppSettings: FC = () => {
               title={intl.formatMessage({
                 id: "account_appSettings_fontStyle_bauhaus",
               })}
-              leadingIcon={selectedFontFamily === "Bauhaus" ? "check" : ""}
+              leadingIcon={() =>
+                selectedFontFamily === "Bauhaus" ? (
+                  <Icon source="check" size={26} color="limegreen" />
+                ) : null
+              }
               titleStyle={{
                 fontFamily:
                   selectedFontFamily === "Bauhaus" ? largeFont : mediumFont,
+                color: theme.colors.textPrimary,
               }}
             />
             <Menu.Item
@@ -281,10 +331,15 @@ const AppSettings: FC = () => {
               title={intl.formatMessage({
                 id: "account_appSettings_fontStyle_hummingbird",
               })}
-              leadingIcon={selectedFontFamily === "Hummingbird" ? "check" : ""}
+              leadingIcon={() =>
+                selectedFontFamily === "Hummingbird" ? (
+                  <Icon source="check" size={26} color="limegreen" />
+                ) : null
+              }
               titleStyle={{
                 fontFamily:
                   selectedFontFamily === "Hummingbird" ? largeFont : mediumFont,
+                color: theme.colors.textPrimary,
               }}
             />
             <Menu.Item
@@ -292,10 +347,15 @@ const AppSettings: FC = () => {
               title={intl.formatMessage({
                 id: "account_appSettings_fontStyle_lobsterTwo",
               })}
-              leadingIcon={selectedFontFamily === "LobsterTwo" ? "check" : ""}
+              leadingIcon={() =>
+                selectedFontFamily === "LobsterTwo" ? (
+                  <Icon source="check" size={26} color="limegreen" />
+                ) : null
+              }
               titleStyle={{
                 fontFamily:
                   selectedFontFamily === "LobsterTwo" ? largeFont : mediumFont,
+                color: theme.colors.textPrimary,
               }}
             />
             <Menu.Item
@@ -303,10 +363,15 @@ const AppSettings: FC = () => {
               title={intl.formatMessage({
                 id: "account_appSettings_fontStyle_nexaScript",
               })}
-              leadingIcon={selectedFontFamily === "NexaScript" ? "check" : ""}
+              leadingIcon={() =>
+                selectedFontFamily === "NexaScript" ? (
+                  <Icon source="check" size={26} color="limegreen" />
+                ) : null
+              }
               titleStyle={{
                 fontFamily:
                   selectedFontFamily === "NexaScript" ? largeFont : mediumFont,
+                color: theme.colors.textPrimary,
               }}
             />
             <Menu.Item
@@ -314,10 +379,15 @@ const AppSettings: FC = () => {
               title={intl.formatMessage({
                 id: "account_appSettings_fontStyle_notoSerif",
               })}
-              leadingIcon={selectedFontFamily === "NotoSerif" ? "check" : ""}
+              leadingIcon={() =>
+                selectedFontFamily === "NotoSerif" ? (
+                  <Icon source="check" size={26} color="limegreen" />
+                ) : null
+              }
               titleStyle={{
                 fontFamily:
                   selectedFontFamily === "NotoSerif" ? largeFont : mediumFont,
+                color: theme.colors.textPrimary,
               }}
             />
             <Menu.Item
@@ -325,10 +395,15 @@ const AppSettings: FC = () => {
               title={intl.formatMessage({
                 id: "account_appSettings_fontStyle_roboto",
               })}
-              leadingIcon={selectedFontFamily === "Roboto" ? "check" : ""}
+              leadingIcon={() =>
+                selectedFontFamily === "Roboto" ? (
+                  <Icon source="check" size={26} color="limegreen" />
+                ) : null
+              }
               titleStyle={{
                 fontFamily:
                   selectedFontFamily === "Roboto" ? largeFont : mediumFont,
+                color: theme.colors.textPrimary,
               }}
             />
             <Menu.Item
@@ -336,10 +411,15 @@ const AppSettings: FC = () => {
               title={intl.formatMessage({
                 id: "account_appSettings_fontStyle_ubuntu",
               })}
-              leadingIcon={selectedFontFamily === "Ubuntu" ? "check" : ""}
+              leadingIcon={() =>
+                selectedFontFamily === "Ubuntu" ? (
+                  <Icon source="check" size={26} color="limegreen" />
+                ) : null
+              }
               titleStyle={{
                 fontFamily:
                   selectedFontFamily === "Ubuntu" ? largeFont : mediumFont,
+                color: theme.colors.textPrimary,
               }}
             />
           </Menu>
@@ -349,7 +429,9 @@ const AppSettings: FC = () => {
               onPress={handleUpdateSettings}
               style={{
                 // @ts-ignore
-                backgroundColor: theme.colors.secondaryLight,
+                backgroundColor: theme.dark
+                  ? theme.colors.secondary
+                  : theme.colors.secondaryLight,
               }}
               labelStyle={{
                 // @ts-ignore
@@ -357,7 +439,7 @@ const AppSettings: FC = () => {
                 fontFamily: largeFont,
               }}
             >
-              {intl.formatMessage({ id: "common_settings_save" })}
+              {intl.formatMessage({ id: "common_settings_save" }).toUpperCase()}
             </Button>
           </View>
         </ScrollView>

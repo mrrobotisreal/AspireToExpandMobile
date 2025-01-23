@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { StyleSheet } from "react-native";
+import { Image, StyleSheet } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import {
   ActivityIndicator,
@@ -32,6 +32,7 @@ export default function TabOneScreen() {
   const intl = useIntl();
   const {
     theme,
+    gradientColors,
     toggleThemeMode,
     changeFontStyle,
     smallFont,
@@ -197,6 +198,23 @@ export default function TabOneScreen() {
           }
           router.push({
             pathname: "/(main)/screens/home",
+            params: {
+              student_id: body.student_id as string,
+              first_name: body.first_name as string,
+              preferred_name: body.preferred_name as string,
+              last_name: body.last_name as string,
+              email_address: body.email_address as string,
+              native_language: body.native_language as string,
+              preferred_language: body.preferred_language as string,
+              student_since: body.student_since as string,
+              theme_mode: body.theme_mode as string,
+              font_style: body.font_style as string,
+              profile_picture_url: body.profile_picture_url as string,
+              profile_picture_path: body.profile_picture_path as string,
+              time_zone: body.time_zone as string,
+              lessons_remaining: body.lessons_remaining as number,
+              lessons_completed: body.lessons_completed as number,
+            },
           });
         } else if (response.status === 401) {
           console.error("Invalid email address or password!"); // TODO: localize; add toast
@@ -219,21 +237,26 @@ export default function TabOneScreen() {
   return (
     <LinearGradient
       style={styles.container}
-      colors={[
-        "#78290f",
-        "#ff7d00",
-        "#ffbf69",
-        "#cbf3f0",
-        "#2ec4b6",
-        "#006d77",
-        "#001524",
-      ]}
+      colors={gradientColors}
       start={{ x: 1, y: 1 }}
       end={{ x: 0, y: 0 }}
     >
-      <Surface style={styles.box}>
+      <Surface
+        style={{
+          ...styles.box,
+          backgroundColor: theme.dark
+            ? theme.colors.surface
+            : theme.colors.background,
+        }}
+      >
         <View style={styles.headerBox}>
-          <Text variant="bodySmall" style={styles.titleText}>
+          <Text
+            variant="bodySmall"
+            style={{
+              ...styles.titleText,
+              color: theme.colors.textPrimary,
+            }}
+          >
             {isLoginVisible
               ? intl.formatMessage({ id: "welcomeScreen_loginTitle" })
               : intl.formatMessage({ id: "welcomeScreen_welcomeTitle" })}
@@ -242,11 +265,34 @@ export default function TabOneScreen() {
             variant="titleLarge"
             style={{
               ...styles.titleText,
+              color: theme.colors.textPrimary,
               fontFamily: "Bauhaus-Heavy",
             }}
           >
             {intl.formatMessage({ id: "appTitle" })}!
           </Text>
+          <Surface
+            elevation={5}
+            style={{
+              borderRadius: 12,
+              width: 200,
+              height: 200,
+              alignSelf: "center",
+              marginVertical: 10,
+              backgroundColor: theme.dark
+                ? theme.colors.surfaceDark
+                : theme.colors.surface,
+            }}
+          >
+            <Image
+              source={require("../assets/images/appIcon.png")}
+              style={{
+                width: 200,
+                height: 200,
+                borderRadius: 12,
+              }}
+            />
+          </Surface>
         </View>
         {isLoginVisible ? (
           <View
@@ -254,38 +300,93 @@ export default function TabOneScreen() {
               marginBottom: 20,
             }}
           >
-            <Text variant="bodyMedium" style={styles.labelText}>
+            <Text
+              variant="bodyMedium"
+              style={{
+                ...styles.labelText,
+                color: theme.colors.textPrimary,
+                fontFamily: "Bauhaus-Heavy",
+              }}
+            >
               {intl.formatMessage({ id: "welcomeScreen_inputEmail" })}:
             </Text>
             <TextInput
               mode="outlined"
-              label={intl.formatMessage({ id: "common_emailAddress" })}
               onChangeText={setEmailInput}
               value={emailInput}
               keyboardType="email-address"
               autoCapitalize="none"
-              style={{ marginBottom: 12, maxHeight: 60 }}
-              contentStyle={{ fontFamily: "BauhausMedium" }}
-              outlineStyle={{ borderColor: "#ff7d00" }}
+              style={{
+                marginBottom: 12,
+                maxHeight: 60,
+                backgroundColor: theme.colors.surface,
+              }}
+              contentStyle={{
+                fontFamily: "Bauhaus-Medium",
+                color: theme.colors.textPrimary,
+              }}
+              outlineStyle={{
+                borderColor: theme.dark
+                  ? theme.colors.secondaryLight
+                  : theme.colors.secondary,
+                backgroundColor: theme.colors.surface,
+              }}
+              activeOutlineColor={
+                theme.dark
+                  ? theme.colors.secondaryLight
+                  : theme.colors.secondary
+              }
+              placeholder={intl.formatMessage({ id: "common_emailAddress" })}
+              placeholderTextColor={theme.colors.textSecondary}
             />
-            <Text variant="bodyMedium" style={styles.labelText}>
+            <Text
+              variant="bodyMedium"
+              style={{
+                ...styles.labelText,
+                color: theme.colors.textPrimary,
+                fontFamily: "Bauhaus-Heavy",
+              }}
+            >
               {intl.formatMessage({ id: "welcomeScreen_inputPassword" })}:
             </Text>
             <TextInput
               mode="outlined"
-              label={intl.formatMessage({ id: "common_passwordTitle" })}
               onChangeText={setPasswordInput}
               value={passwordInput}
               secureTextEntry={!showPassword}
               right={
                 <TextInput.Icon
                   icon={showPassword ? "eye-off" : "eye"}
+                  color={
+                    theme.dark
+                      ? theme.colors.secondaryLight
+                      : theme.colors.secondary
+                  }
                   onPress={() => setShowPassword(!showPassword)}
                 />
               }
-              style={{ marginBottom: 12, maxHeight: 60 }}
-              contentStyle={{ fontFamily: "BauhausMedium" }}
-              outlineStyle={{ borderColor: "#ff7d00" }}
+              style={{
+                marginBottom: 12,
+                maxHeight: 60,
+                backgroundColor: theme.colors.surface,
+              }}
+              contentStyle={{
+                fontFamily: "Bauhaus-Medium",
+                color: theme.colors.textPrimary,
+              }}
+              outlineStyle={{
+                borderColor: theme.dark
+                  ? theme.colors.secondaryLight
+                  : theme.colors.secondary,
+                backgroundColor: theme.colors.surface,
+              }}
+              activeOutlineColor={
+                theme.dark
+                  ? theme.colors.secondaryLight
+                  : theme.colors.secondary
+              }
+              placeholder={intl.formatMessage({ id: "common_passwordTitle" })}
+              placeholderTextColor={theme.colors.textSecondary}
             />
           </View>
         ) : (
@@ -294,18 +395,50 @@ export default function TabOneScreen() {
               marginBottom: 20,
             }}
           >
-            <Text variant="bodyMedium" style={styles.labelText}>
+            <Text
+              variant="bodyMedium"
+              style={{
+                ...styles.labelText,
+                color: theme.colors.textPrimary,
+                fontFamily: "Bauhaus-Heavy",
+              }}
+            >
               {intl.formatMessage({ id: "registrationCodeInputLabel" })}:
             </Text>
             <TextInput
               mode="outlined"
-              label={intl.formatMessage({ id: "registrationCodeInputHint" })}
               onChangeText={setRegistrationCodeInput}
               value={registrationCodeInput}
-              style={{ marginBottom: 12, height: 56 }}
-              outlineStyle={{ borderColor: "#ff7d00" }}
+              style={{
+                marginBottom: 12,
+                maxHeight: 60,
+                backgroundColor: theme.colors.surface,
+              }}
+              contentStyle={{
+                fontFamily: "Bauhaus-Medium",
+                color: theme.colors.textPrimary,
+              }}
+              outlineStyle={{
+                borderColor: theme.dark
+                  ? theme.colors.secondaryLight
+                  : theme.colors.secondary,
+                backgroundColor: theme.colors.surface,
+              }}
+              activeOutlineColor={
+                theme.dark
+                  ? theme.colors.secondaryLight
+                  : theme.colors.secondary
+              }
+              placeholder={intl.formatMessage({
+                id: "registrationCodeInputHint",
+              })}
+              placeholderTextColor={theme.colors.textSecondary}
             />
-            <HelperText variant="labelSmall" type="info">
+            <HelperText
+              variant="labelSmall"
+              type="info"
+              style={{ color: theme.colors.textSecondary }}
+            >
               {intl.formatMessage({ id: "registrationCodeInputHelperText" })}
             </HelperText>
           </View>
@@ -314,7 +447,7 @@ export default function TabOneScreen() {
           <Button
             labelStyle={{ fontFamily: "Bauhaus-Heavy" }}
             mode="text"
-            textColor="#ff7d00"
+            textColor={theme.colors.textButtonSecondary}
             onPress={() => setIsLoginVisible(!isLoginVisible)}
           >
             {intl
@@ -333,10 +466,16 @@ export default function TabOneScreen() {
             />
           ) : (
             <Button
-              labelStyle={{ fontFamily: "Bauhaus-Heavy" }}
-              mode="contained"
-              textColor="#001524"
-              buttonColor="#ffbf69"
+              labelStyle={{
+                fontFamily: "Bauhaus-Heavy",
+                color: theme.colors.textButtonPrimary,
+              }}
+              mode="elevated"
+              buttonColor={
+                theme.dark
+                  ? theme.colors.secondary
+                  : theme.colors.secondaryLight
+              }
               onPress={() => {
                 setIsLoading(true);
                 if (isLoginVisible) {

@@ -20,18 +20,22 @@ export default {
       supportsTablet: true,
     },
     android: {
+      package: "io.winapps.aspirewithalina",
       icon: "./assets/images/appIcon.png",
     },
     web: {
       bundler: "metro",
       output: "static",
-      favicon: "./assets/images/favicon.png",
+      favicon: "./assets/images/appIcon.png",
     },
     plugins: ["expo-router"],
     experiments: {
       typedRoutes: true,
     },
     extra: {
+      eas: {
+        projectId: "db57cb46-54a3-4c60-832b-7986431557c8",
+      },
       MAIN_SERVER_URL: process.env.MAIN_SERVER_URL,
       WS_VIDEO_SERVER_URL: process.env.WS_VIDEO_SERVER_URL,
       WS_MAIN_CHAT_SERVER_URL: process.env.WS_MAIN_CHAT_SERVER_URL,

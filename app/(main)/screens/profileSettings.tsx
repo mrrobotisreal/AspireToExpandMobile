@@ -5,6 +5,7 @@ import {
   Avatar,
   Button,
   Divider,
+  Icon,
   Menu,
   Surface,
   Text,
@@ -19,8 +20,7 @@ import useUploadImage from "../../../hooks/useUploadImage";
 
 const ProfileSettings: FC = () => {
   const intl = useIntl();
-  const { theme, toggleThemeMode, changeFontStyle, largeFont, mediumFont } =
-    useThemeContext();
+  const { theme, gradientColors, largeFont, mediumFont } = useThemeContext();
   const { info, getInfo, updateInfo, updateInfoOnServer } = useStudentContext();
   const { changeLocale } = useLocaleContext();
   const { uploadImage } = useUploadImage();
@@ -154,27 +154,65 @@ const ProfileSettings: FC = () => {
     checkForStudentInfo();
   }, []);
 
+  // useEffect(() => {
+  //   if (info.profile_picture_url) {
+  //     setProfilePictureURL(info.profile_picture_url);
+  //   }
+
+  //   if (info.profile_picture_path) {
+  //     setProfilePicturePath(info.profile_picture_path);
+  //   }
+
+  //   if (info.preferred_language) {
+  //     setPreferredLanguage(info.preferred_language);
+  //   }
+
+  //   if (info.time_zone) {
+  //     setTimeZone(info.time_zone);
+  //   }
+
+  //   console.log("Info: ", JSON.stringify(info, null, 2));
+  //   if (info.lessons_remaining) {
+  //     setLessonsRemaining(info.lessons_remaining);
+  //   }
+  // }, [info]);
+
+  // useEffect(() => {
+  //   if (profilePictureURL && profilePictureURL !== "") {
+  //     setAvatarSrc(profilePictureURL);
+  //   } else if (profilePicturePath && profilePicturePath !== "") {
+  //     setAvatarSrc(profilePicturePath);
+  //   } else {
+  //     setAvatarSrc("");
+  //   }
+  // }, [profilePictureURL, profilePicturePath]);
+
   return (
     <LinearGradient
       style={styles.container}
-      colors={[
-        "#78290f",
-        "#ff7d00",
-        "#ffbf69",
-        "#cbf3f0",
-        "#2ec4b6",
-        "#006d77",
-        "#001524",
-      ]}
+      colors={gradientColors}
       start={{ x: 1, y: 1 }}
       end={{ x: 0, y: 0 }}
     >
-      <Surface style={styles.box}>
+      <Surface
+        style={{
+          ...styles.box,
+          backgroundColor: theme.dark
+            ? theme.colors.surfaceDark
+            : theme.colors.background,
+        }}
+      >
         <ScrollView contentContainerStyle={styles.scrollContent}>
-          <Text variant="headlineMedium">
+          <Text
+            variant="headlineMedium"
+            style={{ color: theme.colors.textPrimary }}
+          >
             {intl.formatMessage({ id: "account_profileSettings" })}
           </Text>
-          <Text variant="bodyLarge" style={{ marginBottom: 6 }}>
+          <Text
+            variant="bodyLarge"
+            style={{ marginBottom: 6, color: theme.colors.textPrimary }}
+          >
             {intl.formatMessage({ id: "account_profileSettings_description" })}
           </Text>
           <Divider
@@ -184,7 +222,10 @@ const ProfileSettings: FC = () => {
             }}
             bold
           />
-          <Text variant="titleLarge" style={{ marginBottom: 8 }}>
+          <Text
+            variant="titleLarge"
+            style={{ marginBottom: 8, color: theme.colors.textPrimary }}
+          >
             {intl.formatMessage({
               id: "account_profileSettings_profilePicture",
             })}
@@ -214,16 +255,23 @@ const ProfileSettings: FC = () => {
             onPress={handleChooseImage}
             style={{
               marginBottom: 24,
-              borderColor: theme.colors.secondary,
+              borderColor: theme.dark
+                ? theme.colors.secondaryLight
+                : theme.colors.secondary,
             }}
             labelStyle={{
-              color: theme.colors.secondary,
+              color: theme.dark
+                ? theme.colors.secondaryLight
+                : theme.colors.secondary,
               fontFamily: largeFont,
             }}
           >
             {intl.formatMessage({ id: "common_chooseImage" }).toUpperCase()}
           </Button>
-          <Text variant="titleLarge" style={{ marginBottom: 8 }}>
+          <Text
+            variant="titleLarge"
+            style={{ marginBottom: 8, color: theme.colors.textPrimary }}
+          >
             {intl.formatMessage({ id: "common_preferredLanguage" })}:
           </Text>
           <Menu
@@ -235,10 +283,14 @@ const ProfileSettings: FC = () => {
                 onPress={() => setIsPreferredLanguageMenuVisible(true)}
                 style={{
                   marginBottom: 24,
-                  borderColor: theme.colors.secondary,
+                  borderColor: theme.dark
+                    ? theme.colors.secondaryLight
+                    : theme.colors.secondary,
                 }}
                 labelStyle={{
-                  color: theme.colors.secondary,
+                  color: theme.dark
+                    ? theme.colors.secondaryLight
+                    : theme.colors.secondary,
                   fontFamily: largeFont,
                 }}
               >
@@ -247,54 +299,85 @@ const ProfileSettings: FC = () => {
                 })}
               </Button>
             }
+            contentStyle={{
+              backgroundColor: theme.colors.surface,
+              borderRadius: 8,
+            }}
             style={{ width: "92%" }}
           >
             <Menu.Item
               onPress={() => {
                 setPreferredLanguage("en");
+                changeLocale("en");
                 setIsPreferredLanguageMenuVisible(false);
               }}
-              leadingIcon={preferredLanguage === "en" ? "check" : ""}
+              leadingIcon={() =>
+                preferredLanguage === "en" ? (
+                  <Icon source="check" size={26} color="limegreen" />
+                ) : null
+              }
               title={intl.formatMessage({ id: "common_language_en" })}
               titleStyle={{
                 fontFamily: preferredLanguage === "en" ? largeFont : mediumFont,
+                color: theme.colors.textPrimary,
               }}
             />
             <Menu.Item
               onPress={() => {
                 setPreferredLanguage("uk");
+                changeLocale("uk");
                 setIsPreferredLanguageMenuVisible(false);
               }}
-              leadingIcon={preferredLanguage === "uk" ? "check" : ""}
+              leadingIcon={() =>
+                preferredLanguage === "uk" ? (
+                  <Icon source="check" size={26} color="limegreen" />
+                ) : null
+              }
               title={intl.formatMessage({ id: "common_language_uk" })}
               titleStyle={{
                 fontFamily: preferredLanguage === "uk" ? largeFont : mediumFont,
+                color: theme.colors.textPrimary,
               }}
             />
             <Menu.Item
               onPress={() => {
                 setPreferredLanguage("ru");
+                changeLocale("ru");
                 setIsPreferredLanguageMenuVisible(false);
               }}
-              leadingIcon={preferredLanguage === "ru" ? "check" : ""}
+              leadingIcon={() =>
+                preferredLanguage === "ru" ? (
+                  <Icon source="check" size={26} color="limegreen" />
+                ) : null
+              }
               title={intl.formatMessage({ id: "common_language_ru" })}
               titleStyle={{
                 fontFamily: preferredLanguage === "ru" ? largeFont : mediumFont,
+                color: theme.colors.textPrimary,
               }}
             />
             <Menu.Item
               onPress={() => {
                 setPreferredLanguage("de");
+                changeLocale("de");
                 setIsPreferredLanguageMenuVisible(false);
               }}
-              leadingIcon={preferredLanguage === "de" ? "check" : ""}
+              leadingIcon={() =>
+                preferredLanguage === "de" ? (
+                  <Icon source="check" size={26} color="limegreen" />
+                ) : null
+              }
               title={intl.formatMessage({ id: "common_language_de" })}
               titleStyle={{
                 fontFamily: preferredLanguage === "de" ? largeFont : mediumFont,
+                color: theme.colors.textPrimary,
               }}
             />
           </Menu>
-          <Text variant="titleLarge" style={{ marginBottom: 8 }}>
+          <Text
+            variant="titleLarge"
+            style={{ marginBottom: 8, color: theme.colors.textPrimary }}
+          >
             {intl.formatMessage({ id: "common_timeZone" })}:
           </Text>
           <Menu
@@ -306,16 +389,24 @@ const ProfileSettings: FC = () => {
                 onPress={() => setIsTimeZoneMenuVisible(true)}
                 style={{
                   marginBottom: 24,
-                  borderColor: theme.colors.secondary,
+                  borderColor: theme.dark
+                    ? theme.colors.secondaryLight
+                    : theme.colors.secondary,
                 }}
                 labelStyle={{
-                  color: theme.colors.secondary,
+                  color: theme.dark
+                    ? theme.colors.secondaryLight
+                    : theme.colors.secondary,
                   fontFamily: largeFont,
                 }}
               >
                 {intl.formatMessage({ id: timeZone })}
               </Button>
             }
+            contentStyle={{
+              backgroundColor: theme.colors.surface,
+              borderRadius: 8,
+            }}
             style={{ width: "92%" }}
           >
             <Menu.Item
@@ -323,11 +414,16 @@ const ProfileSettings: FC = () => {
                 setTimeZone("timeZone_us_pacific");
                 setIsTimeZoneMenuVisible(false);
               }}
-              leadingIcon={timeZone === "timeZone_us_pacific" ? "check" : ""}
+              leadingIcon={() =>
+                timeZone === "timeZone_us_pacific" ? (
+                  <Icon source="check" size={26} color="limegreen" />
+                ) : null
+              }
               title={intl.formatMessage({ id: "timeZone_us_pacific" })}
               titleStyle={{
                 fontFamily:
                   timeZone === "timeZone_us_pacific" ? largeFont : mediumFont,
+                color: theme.colors.textPrimary,
               }}
             />
             <Menu.Item
@@ -335,11 +431,16 @@ const ProfileSettings: FC = () => {
                 setTimeZone("timeZone_us_mountain");
                 setIsTimeZoneMenuVisible(false);
               }}
-              leadingIcon={timeZone === "timeZone_us_mountain" ? "check" : ""}
+              leadingIcon={() =>
+                timeZone === "timeZone_us_mountain" ? (
+                  <Icon source="check" size={26} color="limegreen" />
+                ) : null
+              }
               title={intl.formatMessage({ id: "timeZone_us_mountain" })}
               titleStyle={{
                 fontFamily:
                   timeZone === "timeZone_us_mountain" ? largeFont : mediumFont,
+                color: theme.colors.textPrimary,
               }}
             />
             <Menu.Item
@@ -347,11 +448,16 @@ const ProfileSettings: FC = () => {
                 setTimeZone("timeZone_us_central");
                 setIsTimeZoneMenuVisible(false);
               }}
-              leadingIcon={timeZone === "timeZone_us_central" ? "check" : ""}
+              leadingIcon={() =>
+                timeZone === "timeZone_us_central" ? (
+                  <Icon source="check" size={26} color="limegreen" />
+                ) : null
+              }
               title={intl.formatMessage({ id: "timeZone_us_central" })}
               titleStyle={{
                 fontFamily:
                   timeZone === "timeZone_us_central" ? largeFont : mediumFont,
+                color: theme.colors.textPrimary,
               }}
             />
             <Menu.Item
@@ -359,11 +465,16 @@ const ProfileSettings: FC = () => {
                 setTimeZone("timeZone_us_eastern");
                 setIsTimeZoneMenuVisible(false);
               }}
-              leadingIcon={timeZone === "timeZone_us_eastern" ? "check" : ""}
+              leadingIcon={() =>
+                timeZone === "timeZone_us_eastern" ? (
+                  <Icon source="check" size={26} color="limegreen" />
+                ) : null
+              }
               title={intl.formatMessage({ id: "timeZone_us_eastern" })}
               titleStyle={{
                 fontFamily:
                   timeZone === "timeZone_us_eastern" ? largeFont : mediumFont,
+                color: theme.colors.textPrimary,
               }}
             />
             <Menu.Item
@@ -371,11 +482,16 @@ const ProfileSettings: FC = () => {
                 setTimeZone("timeZone_at_vienna");
                 setIsTimeZoneMenuVisible(false);
               }}
-              leadingIcon={timeZone === "timeZone_at_vienna" ? "check" : ""}
+              leadingIcon={() =>
+                timeZone === "timeZone_at_vienna" ? (
+                  <Icon source="check" size={26} color="limegreen" />
+                ) : null
+              }
               title={intl.formatMessage({ id: "timeZone_at_vienna" })}
               titleStyle={{
                 fontFamily:
                   timeZone === "timeZone_at_vienna" ? largeFont : mediumFont,
+                color: theme.colors.textPrimary,
               }}
             />
             <Menu.Item
@@ -383,15 +499,23 @@ const ProfileSettings: FC = () => {
                 setTimeZone("timeZone_ua_kyiv");
                 setIsTimeZoneMenuVisible(false);
               }}
-              leadingIcon={timeZone === "timeZone_ua_kyiv" ? "check" : ""}
+              leadingIcon={() =>
+                timeZone === "timeZone_ua_kyiv" ? (
+                  <Icon source="check" size={26} color="limegreen" />
+                ) : null
+              }
               title={intl.formatMessage({ id: "timeZone_ua_kyiv" })}
               titleStyle={{
                 fontFamily:
                   timeZone === "timeZone_ua_kyiv" ? largeFont : mediumFont,
+                color: theme.colors.textPrimary,
               }}
             />
           </Menu>
-          <Text variant="titleLarge" style={{ marginBottom: 8 }}>
+          <Text
+            variant="titleLarge"
+            style={{ marginBottom: 8, color: theme.colors.textPrimary }}
+          >
             {/* {intl.formatMessage({ id: "account_profileSettings_totalLessonsRemaining" }, { lessonsRemaining })}: */}
             Total lessongs remaining:
           </Text>
@@ -402,6 +526,7 @@ const ProfileSettings: FC = () => {
               fontFamily: largeFont,
               width: "100%",
               textAlign: "center",
+              color: theme.colors.textPrimary,
             }}
           >
             {lessonsRemaining}
@@ -411,10 +536,14 @@ const ProfileSettings: FC = () => {
             onPress={() => setIsPaymentDialogOpen(true)}
             style={{
               marginBottom: 36,
-              borderColor: theme.colors.secondary,
+              borderColor: theme.dark
+                ? theme.colors.secondaryLight
+                : theme.colors.secondary,
             }}
             labelStyle={{
-              color: theme.colors.secondary,
+              color: theme.dark
+                ? theme.colors.secondaryLight
+                : theme.colors.secondary,
               fontFamily: largeFont,
             }}
           >
@@ -428,14 +557,14 @@ const ProfileSettings: FC = () => {
             <Button
               labelStyle={{
                 fontFamily: largeFont,
-                // @ts-ignore
-                color: theme.colors.textPrimary,
+                color: theme.colors.textButtonPrimary,
               }}
               style={{
-                // @ts-ignore
-                backgroundColor: theme.colors.secondaryLight,
+                backgroundColor: theme.dark
+                  ? theme.colors.secondary
+                  : theme.colors.secondaryLight,
               }}
-              mode="contained"
+              mode="elevated"
               onPress={handleUpdateSettings}
             >
               {intl.formatMessage({ id: "common_settings_save" }).toUpperCase()}

@@ -16,6 +16,7 @@ import {
   LineChart as GiftedLineChart,
 } from "react-native-gifted-charts";
 import { useIntl } from "react-intl";
+import { useLocalSearchParams } from "expo-router";
 
 import { useStudentContext } from "../../../context/studentContext";
 import { useThemeContext } from "../../../context/themeContext";
@@ -23,16 +24,25 @@ import { ContributionChartValue } from "react-native-chart-kit/dist/contribution
 
 const Home: FC = () => {
   const intl = useIntl();
-  const { theme, largeFont, mediumFont } = useThemeContext();
+  const {
+    student_id,
+    first_name,
+    preferred_name,
+    last_name,
+    email_address,
+    student_since,
+    native_language,
+    preferred_language,
+    profile_picture_url,
+    theme_mode,
+    font_style,
+    time_zone,
+    lessons_remaining,
+    lessons_completed,
+  } = useLocalSearchParams();
+  const { theme, gradientColors, largeFont, mediumFont } = useThemeContext();
   const { info, getInfo, updateInfo } = useStudentContext();
-  const { preferred_name, student_since } = info;
-  const studentSinceDate = student_since
-    ? new Date(student_since.split(" ")[0])
-    : null;
-  console.log(
-    "studentSinceDate:",
-    studentSinceDate ? studentSinceDate.toDateString() : null
-  );
+  // const { preferred_name } = info;
   const [isChartDetailsDialogVisible, setIsChartDetailsDialogVisible] =
     useState(false);
   const [selectedDate, setSelectedDate] = useState("");
@@ -99,27 +109,32 @@ const Home: FC = () => {
   return (
     <LinearGradient
       style={styles.container}
-      colors={[
-        "#78290f",
-        "#ff7d00",
-        "#ffbf69",
-        "#cbf3f0",
-        "#2ec4b6",
-        "#006d77",
-        "#001524",
-      ]}
+      colors={gradientColors}
       start={{ x: 1, y: 1 }}
       end={{ x: 0, y: 0 }}
     >
-      <Surface style={styles.box}>
+      <Surface
+        style={{
+          ...styles.box,
+          backgroundColor: theme.dark
+            ? theme.colors.surfaceDark
+            : theme.colors.background,
+        }}
+      >
         <ScrollView contentContainerStyle={styles.scrollContent}>
-          <Text variant="headlineMedium">
+          <Text
+            variant="headlineMedium"
+            style={{ color: theme.colors.textPrimary }}
+          >
             {intl.formatMessage(
               { id: "common_welcome" },
               { firstName: preferred_name }
             )}
           </Text>
-          <Text variant="bodyLarge" style={{ marginBottom: 12 }}>
+          <Text
+            variant="bodyLarge"
+            style={{ marginBottom: 12, color: theme.colors.textPrimary }}
+          >
             {intl.formatMessage({ id: "home_description" })}
           </Text>
           <Divider
@@ -129,13 +144,19 @@ const Home: FC = () => {
             }}
             bold
           />
-          <Text variant="titleLarge" style={{ marginBottom: 8 }}>
+          <Text
+            variant="titleLarge"
+            style={{ marginBottom: 8, color: theme.colors.textPrimary }}
+          >
             {intl.formatMessage({
               id: "home_activity",
               defaultMessage: "Activity",
             })}
           </Text>
-          <Text variant="bodyLarge" style={{ marginBottom: 8 }}>
+          <Text
+            variant="bodyLarge"
+            style={{ marginBottom: 8, color: theme.colors.textPrimary }}
+          >
             {intl.formatMessage({
               id: "home_activity_description",
               defaultMessage:
@@ -226,13 +247,19 @@ const Home: FC = () => {
               }}
             />
           </View>
-          <Text variant="titleLarge" style={{ marginBottom: 8 }}>
+          <Text
+            variant="titleLarge"
+            style={{ marginBottom: 8, color: theme.colors.textPrimary }}
+          >
             {intl.formatMessage({
               id: "home_classPerformance",
               defaultMessage: "Class Performance",
             })}
           </Text>
-          <Text variant="bodyLarge" style={{ marginBottom: 8 }}>
+          <Text
+            variant="bodyLarge"
+            style={{ marginBottom: 8, color: theme.colors.textPrimary }}
+          >
             {intl.formatMessage({
               id: "home_classPerformance_description",
               defaultMessage:
@@ -340,13 +367,19 @@ const Home: FC = () => {
               // curved
             />
           </View>
-          <Text variant="titleLarge" style={{ marginBottom: 8 }}>
+          <Text
+            variant="titleLarge"
+            style={{ marginBottom: 8, color: theme.colors.textPrimary }}
+          >
             {intl.formatMessage({
               id: "home_assignmentsScores",
               defaultMessage: "Assignments Scores",
             })}
           </Text>
-          <Text variant="bodyLarge" style={{ marginBottom: 8 }}>
+          <Text
+            variant="bodyLarge"
+            style={{ marginBottom: 8, color: theme.colors.textPrimary }}
+          >
             {intl.formatMessage({
               id: "home_assignmentsScores_description",
               defaultMessage:
@@ -412,13 +445,19 @@ const Home: FC = () => {
               animationDuration={1500}
             />
           </View>
-          <Text variant="titleLarge" style={{ marginBottom: 8 }}>
+          <Text
+            variant="titleLarge"
+            style={{ marginBottom: 8, color: theme.colors.textPrimary }}
+          >
             {intl.formatMessage({
               id: "home_dailyProgress",
               defaultMessage: "Daily Progress",
             })}
           </Text>
-          <Text variant="bodyLarge" style={{ marginBottom: 8 }}>
+          <Text
+            variant="bodyLarge"
+            style={{ marginBottom: 8, color: theme.colors.textPrimary }}
+          >
             {intl.formatMessage({
               id: "home_dailyProgress_description",
               defaultMessage:
@@ -431,6 +470,7 @@ const Home: FC = () => {
               marginBottom: 8,
               alignSelf: "center",
               textAlign: "center",
+              color: theme.colors.textPrimary,
             }}
           >
             {`${currentProgressLabels[0]} - ${currentProgressLabels[currentProgressLabels.length - 1]}`}
@@ -487,8 +527,13 @@ const Home: FC = () => {
         <Dialog
           visible={isChartDetailsDialogVisible}
           onDismiss={() => setIsChartDetailsDialogVisible(false)}
+          style={{
+            backgroundColor: theme.colors.surface,
+          }}
         >
-          <Dialog.Title style={{ fontFamily: largeFont }}>
+          <Dialog.Title
+            style={{ fontFamily: largeFont, color: theme.colors.textPrimary }}
+          >
             Class Performance
           </Dialog.Title>
           <Dialog.Content>
@@ -499,34 +544,50 @@ const Home: FC = () => {
                 marginBottom: 20,
               }}
             />
-            <Text variant="titleMedium" style={{ fontFamily: largeFont }}>
+            <Text
+              variant="titleMedium"
+              style={{ fontFamily: largeFont, color: theme.colors.textPrimary }}
+            >
               Date:
             </Text>
             <Text
               variant="bodyLarge"
-              style={{ fontFamily: mediumFont, marginBottom: 12 }}
+              style={{
+                fontFamily: mediumFont,
+                marginBottom: 12,
+                color: theme.colors.textPrimary,
+              }}
             >
               {selectedDate}
             </Text>
-            <Text variant="titleMedium" style={{ fontFamily: largeFont }}>
+            <Text
+              variant="titleMedium"
+              style={{ fontFamily: largeFont, color: theme.colors.textPrimary }}
+            >
               Performance:
             </Text>
-            <Text variant="bodyLarge" style={{ fontFamily: mediumFont }}>
+            <Text
+              variant="bodyLarge"
+              style={{
+                fontFamily: mediumFont,
+                color: theme.colors.textPrimary,
+              }}
+            >
               {selectedCount}%
             </Text>
           </Dialog.Content>
           <Dialog.Actions>
             <Button
-              mode="contained"
+              mode="elevated"
               style={{
-                // @ts-ignore
-                backgroundColor: theme.colors.secondaryLight,
+                backgroundColor: theme.dark
+                  ? theme.colors.secondary
+                  : theme.colors.secondaryLight,
                 width: "25%",
               }}
               labelStyle={{
                 fontFamily: largeFont,
-                // @ts-ignore
-                color: theme.colors.textPrimary,
+                color: theme.colors.textButtonPrimary,
               }}
               onPress={() => setIsChartDetailsDialogVisible(false)}
             >
